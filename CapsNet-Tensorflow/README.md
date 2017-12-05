@@ -1,23 +1,18 @@
-# CapsNet-Tensorflow
+# Capsule Network - notMNIST and affNIST Dataset
+A Tensorflow implementation of CapsNet on notMNIST and affNIST dataset based on Geoffrey Hinton's paper [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829)
 
-[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=plastic)](CONTRIBUTING.md)
+## Datasets ##
+1) [notMNIST](http://yaroslavvb.blogspot.com/2011/09/notmnist-dataset.html) which contatins letters from 'A' to 'J' and can be used for validating if a given algorithm is generic and can work outside the MNIST dataset.
+
+2) The [affMNIST](http://www.cs.toronto.edu/~tijmen/affNIST/) dataset for machine learning is based on the well-known MNIST dataset. MNIST, however, has become quite a small set, given the power of today's computers, with their multiple CPU's and sometimes GPU's. affNIST is made by taking images from MNIST and applying various reasonable affine transformations to them. In the process, the images become 40x40 pixels large, with significant translations involved, so much of the challenge for the models is to learn that a digit means the same thing in the upper right corner as it does in the lower left corner. 
+
+Research into "capsules" has suggested that it is beneficial to directly model the position (or more general "pose") in which an object is found. affNIST aims to facilitate that by providing the exact transformation that has been applied to make each data case, as well as the original 28x28 image. This allows one to train a model to normalize the input, or to at least recognize in which ways it has been deformed from a more normal image. 
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=plastic)](https://opensource.org/licenses/Apache-2.0)
-[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=plastic)](https://gitter.im/CapsNet-Tensorflow/Lobby)
-
-A Tensorflow implementation of CapsNet based on Geoffrey Hinton's paper [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829)
-
-![capsVSneuron](imgs/capsuleVSneuron.png)
-
-> **Notes:**
-> 1. The current version supports the [MNIST](http://yann.lecun.com/exdb/mnist/) and [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist) datasets. The current test accuracy for MNIST is `99.57%`, and Fashion-MNIST `90.60%`, see details in the `Results` section
-> 2. See [dist_version](dist_version) for multi-GPU support
-> 3. [Here(知乎)](https://zhihu.com/question/67287444/answer/251460831) is an article explaining my understanding of the paper. It may be helpful in understanding the code.
 
 
-> **Important:**
->
-> If you need to apply CapsNet model to your own datasets or build up a new model with the basic block of CapsNet, please follow my new project [CapsLayer](https://github.com/naturomics/CapsLayer), which is an advanced library for capsule theory, aiming to integrate capsule-relevant technologies, provide relevant analysis tools, develop related application examples, and promote the development of capsule theory. For example, you can use capsule layer block in your code easily with the API ``capsLayer.layers.fully_connected`` and ``capsLayer.layers.conv2d``
-
+> 1.Capsule - A new version neural unit(vector in vector out, not scalar in scalar out)
+> 2.Routing algorithm - similar to attention mechanism
 
 ## Requirements
 - Python
@@ -34,26 +29,16 @@ $ git clone https://github.com/naturomics/CapsNet-Tensorflow.git
 $ cd CapsNet-Tensorflow
 ```
 
-**Step 2.** Download the [MNIST](http://yann.lecun.com/exdb/mnist/) or [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist) dataset. In this step, you have two choices:
+**Step 2.** Download the [notMNIST](https://github.com/davidflanagan/notMNIST-to-MNIST.git)
 
-- a) Automatic downloading with `download_data.py` script
-```
-$ python download_data.py   (for mnist dataset)
-$ python download_data.py --dataset fashion-mnist --save_to data/fashion (for fashion-mnist dataset)
-```
-
-- b) Manual downloading with `wget` or other tools, move and extract dataset into ``data/mnist`` or ``data/fashion-mnist`` directory, for example:
+- a) Unzip the same into the data/notMNIST
 
 ```
-$ mkdir -p data/mnist
-$ wget -c -P data/mnist http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
-$ wget -c -P data/mnist http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
-$ wget -c -P data/mnist http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
-$ wget -c -P data/mnist http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
-$ gunzip data/mnist/*.gz
+$ mkdir -p data/notMnist
+$ gunzip data/notMnist/*.gz
 ```
 
-**Step 3.** Start the training(Using the MNIST dataset by default):
+**Step 3.** Start the training(Using the notMNIST dataset by default):
 
 ```
 $ python main.py
@@ -89,14 +74,8 @@ Test accuracy | 0.43 | 0.44 | 0.49 |
 ![test_acc](results/routing_trials.png)
 
 
-> My simple comments for capsule
-> 1. A new version neural unit(vector in vector out, not scalar in scalar out)
-> 2. The routing algorithm is similar to attention mechanism
-> 3. Anyway, a great potential work, a lot to be built upon
-
-
-## My weChat:
- ![my_wechat](/imgs/my_wechat_QR.png)
+![capsVSneuron](imgs/capsuleVSneuron.png)
 
 ### Reference
+- [naturomics/CapsNet-Tensorflow](https://github.com/naturomics/CapsNet-Tensorflow): Capsule Network Implementation
 - [XifengGuo/CapsNet-Keras](https://github.com/XifengGuo/CapsNet-Keras): referred for some code optimizations
