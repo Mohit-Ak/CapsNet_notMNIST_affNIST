@@ -38,12 +38,12 @@ def load_notMNIST(batch_size, is_training=True):
         return teX / 255., teY, num_te_batch
 
 
-def load_fashion_affnist(batch_size, is_training=True):
+def load_affNIST(batch_size, is_training=True):
     path = os.path.join('data', 'affNIST')
     if is_training
         fd = open(os.path.join(path, 'train-images-idx3-ubyte'))
         loaded = np.fromfile(file=fd, dtype=np.uint8)
-        trainX = loaded[16:].reshape((60000, 28, 28, 1)).astype(np.float32)
+        trainX = loaded[16:].reshape((60000, 40, 40, 1)).astype(np.float32)
 
         fd = open(os.path.join(path, 'train-labels-idx1-ubyte'))
         loaded = np.fromfile(file=fd, dtype=np.uint8)
@@ -62,7 +62,7 @@ def load_fashion_affnist(batch_size, is_training=True):
     else:
         fd = open(os.path.join(path, 't10k-images-idx3-ubyte'))
         loaded = np.fromfile(file=fd, dtype=np.uint8)
-        teX = loaded[16:].reshape((10000, 28, 28, 1)).astype(np.float)
+        teX = loaded[16:].reshape((10000, 40, 40, 1)).astype(np.float)
 
         fd = open(os.path.join(path, 't10k-labels-idx1-ubyte'))
         loaded = np.fromfile(file=fd, dtype=np.uint8)
@@ -76,7 +76,7 @@ def load_data(dataset, batch_size, is_training=True, one_hot=False):
     if dataset == 'notMNIST':
         return load_notMNIST(batch_size, is_training)
     elif dataset == 'affNIST':
-        return load_fashion_mnist(batch_size, is_training)
+        return load_affNIST(batch_size, is_training)
     else:
         raise Exception('Invalid dataset, please check the name of dataset:', dataset)
 
@@ -85,7 +85,7 @@ def get_batch_data(dataset, batch_size, num_threads):
     if dataset == 'notMNIST':
         trX, trY, num_tr_batch, valX, valY, num_val_batch = load_notMNIST(batch_size, is_training=True)
     elif dataset == 'affNIST':
-        trX, trY, num_tr_batch, valX, valY, num_val_batch = load_fashion_mnist(batch_size, is_training=True)
+        trX, trY, num_tr_batch, valX, valY, num_val_batch = load_affNIST(batch_size, is_training=True)
     data_queues = tf.train.slice_input_producer([trX, trY])
     X, Y = tf.train.shuffle_batch(data_queues, num_threads=num_threads,
                                   batch_size=batch_size,
