@@ -62,7 +62,9 @@ def load_test_affNIST():
     dataset = loadmat(path)
 
     ans_set = dataset['affNISTdata']['label_int']
-    test_set = dataset['affNISTdata']['image'].transpose()/255.0
+    test_set = dataset['affNISTdata']['image']
+    for i in test_set[:100]:
+         print (i)
     print ('test_set',test_set.shape)# (10000, 1600)
     print ('label_set',ans_set.shape)#(10000,)
     return test_set,ans_set
@@ -72,7 +74,9 @@ def load_train_affNIST():
     dataset = loadmat(path)
 
     ans_set = dataset['affNISTdata']['label_int']
-    train_set = dataset['affNISTdata']['image'].transpose()/255.0
+    train_set = dataset['affNISTdata']['image']
+    for i in train_set[:100]:
+         print (i)
     print ('train_set',train_set.shape)# (60000, 1600)
     print ('label_set',ans_set.shape)#(60000,)
     return train_set,ans_set

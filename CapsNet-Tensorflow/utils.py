@@ -1,7 +1,47 @@
 import os
 import scipy
 import numpy as np
+import scipy.io as spio
+from matplotlib import pyplot as plt
+from matplotlib import cm
 import tensorflow as tf
+
+
+def loadmat(filename):
+    '''
+    this function should be called instead of direct spio.loadmat
+    as it cures the problem of not properly recovering python dictionaries
+    from mat files. It calls the function check keys to cure all entries
+    which are still mat-objects
+    '''
+    data = spio.loadmat(filename, struct_as_record=False, squeeze_me=True)
+    return _check_keys(data)
+
+
+def _check_keys(dict):
+    '''
+    checks if entries in dictionary are mat-objects. If yes
+    todict is called to change them to nested dictionaries
+    '''
+    for key in dict:
+        if isinstance(dict[key], spio.matlab.mio5_params.mat_struct):
+            dict[key] = _todict(dict[key])
+    return dict        
+
+
+def _todict(matobj):
+    '''
+    A recursive function which constructs from matobjects nested dictionaries
+    '''
+    dict = {}
+    for strg in matobj._fieldnames:
+        elem = matobj.__dict__[strg]
+        if isinstance(elem, spio.matlab.mio5_params.mat_struct):
+            dict[strg] = _todict(elem)
+        else:
+            dict[strg] = elem
+    return dict
+
 
 
 def load_notMNIST(batch_size, is_training=True):
@@ -9,6 +49,11 @@ def load_notMNIST(batch_size, is_training=True):
     if is_training:
         fd = open(os.path.join(path, 'train-images-idx3-ubyte'))
         loaded = np.fromfile(file=fd, dtype=np.uint8)
+        print("loaded")
+        # for i in loaded[:100]:
+        #  print (i)
+        
+        # return
         trainX = loaded[16:].reshape((60000, 28, 28, 1)).astype(np.float32)
 
         fd = open(os.path.join(path, 'train-labels-idx1-ubyte'))
@@ -38,35 +83,111 @@ def load_notMNIST(batch_size, is_training=True):
         return teX / 255., teY, num_te_batch
 
 
+
+# def load_mnist(batch_size, is_training=True):
+#     path = os.path.join('data', 'mnist')
+#     if is_training:
+#         fd = open(os.path.join(path, 'train-images-idx3-ubyte'))
+#         loaded = np.fromfile(file=fd, dtype=np.uint8)
+#         trainX = loaded[16:].reshape((60000, 28, 28, 1)).astype(np.float32)
+
+#         fd = open(os.path.join(path, 'train-labels-idx1-ubyte'))
+#         loaded = np.fromfile(file=fd, dtype=np.uint8)
+#         trainY = loaded[8:].reshape((60000)).astype(np.int32)
+
+#         trX = trainX[:55000] / 255.
+#         trY = trainY[:55000]
+
+#         valX = trainX[55000:, ] / 255.
+#         valY = trainY[55000:]
+
+#         num_tr_batch = 55000 // batch_size
+#         num_val_batch = 5000 // batch_size
+#         print("........")
+#         print(trY.shape)
+#         print(trY)
+#         print(trX.dtype)
+#         print(trY.dtype)
+#         print(valX.dtype)
+#         print(valY.dtype)
+#         # print(trY)
+#         # print(num_tr_batch)
+#         # print(valX)
+#         # print(valY)
+#         # print(num_val_batch)
+#         print("........")
+#         return
+#         return trX, trY, num_tr_batch, valX, valY, num_val_batch
+#     else:
+#         fd = open(os.path.join(path, 't10k-images-idx3-ubyte'))
+#         loaded = np.fromfile(file=fd, dtype=np.uint8)
+#         teX = loaded[16:].reshape((10000, 28, 28, 1)).astype(np.float)
+
+#         fd = open(os.path.join(path, 't10k-labels-idx1-ubyte'))
+#         loaded = np.fromfile(file=fd, dtype=np.uint8)
+#         teY = loaded[8:].reshape((10000)).astype(np.int32)
+
+#         num_te_batch = 10000 // batch_size
+#         return teX / 255., teY, num_te_batch
+
 def load_affNIST(batch_size, is_training=True):
-    path = os.path.join('data', 'affNIST')
-    if is_training
-        fd = open(os.path.join(path, 'train-images-idx3-ubyte'))
-        loaded = np.fromfile(file=fd, dtype=np.uint8)
-        trainX = loaded[16:].reshape((60000, 40, 40, 1)).astype(np.float32)
+    
+    if is_training:
+        
+        path = 'data/affNIST/train/1.mat'
+        dataset = loadmat(path)
 
-        fd = open(os.path.join(path, 'train-labels-idx1-ubyte'))
-        loaded = np.fromfile(file=fd, dtype=np.uint8)
-        trainY = loaded[8:].reshape((60000)).astype(np.int32)
+        ans_set = dataset['affNISTdata']['label_int']
+        train_set = dataset['affNISTdata']['image'].transpose()/255.0
+        # print ('train_set',train_set.shape)# (60000, 1600)
+        # print ('label_set',ans_set.shape)#(60000,)
 
-        trX = trainX[:55000] / 255.
-        trY = trainY[:55000]
+        trX = train_set[:55000]
+        trX=trX.reshape((55000,40,40,1))
+        trX=trX.astype(np.float32)
 
-        valX = trainX[55000:, ] / 255.
-        valY = trainY[55000:]
+        trY = ans_set[:55000]
+        trY=trY.astype(np.int32)
+
+        valX = train_set[55000:, ]
+        valX=valX.reshape((5000,40,40,1))
+        valX=valX.astype(np.float32)
+
+        valY = ans_set[55000:]
+        valY=valY.astype(np.int32)
 
         num_tr_batch = 55000 // batch_size
         num_val_batch = 5000 // batch_size
+        
+        # print("........")
+        # print(trY.shape)
+        # print(trY)
+        # print(trX.dtype)
+        # print(trY.dtype)
+        # print(valX.dtype)
+        # print(valY.dtype)
+        # # print(trY)
+        # # print(num_tr_batch)
+        # # print(valX)
+        # # print(valY)
+        # # print(num_val_batch)
+        # print("........")
+        # # return
 
         return trX, trY, num_tr_batch, valX, valY, num_val_batch
     else:
-        fd = open(os.path.join(path, 't10k-images-idx3-ubyte'))
-        loaded = np.fromfile(file=fd, dtype=np.uint8)
-        teX = loaded[16:].reshape((10000, 40, 40, 1)).astype(np.float)
+        path = 'data/affNIST/test/1.mat'
+        dataset = loadmat(path)
 
-        fd = open(os.path.join(path, 't10k-labels-idx1-ubyte'))
-        loaded = np.fromfile(file=fd, dtype=np.uint8)
-        teY = loaded[8:].reshape((10000)).astype(np.int32)
+        ans_set = dataset['affNISTdata']['label_int']
+        test_set = dataset['affNISTdata']['image'].transpose()/255.0
+        teX=test_set.reshape((10000,40,40,1)).astype(np.float)
+        
+        # teX = loaded[16:].reshape((10000, 40, 40, 1)).astype(np.float)
+
+        # fd = open(os.path.join(path, 't10k-labels-idx1-ubyte'))
+        # loaded = np.fromfile(file=fd, dtype=np.uint8)
+        teY = ans_set.reshape((10000)).astype(np.int32)
 
         num_te_batch = 10000 // batch_size
         return teX / 255., teY, num_te_batch

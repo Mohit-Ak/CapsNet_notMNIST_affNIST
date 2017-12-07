@@ -8,13 +8,13 @@ import tensorflow as tf
 
 from config import cfg
 from utils import get_batch_data
-from capsLayer import CapsLayer
+from capsLayerAffNIST import CapsLayerAffNIST
 
 
 epsilon = 1e-9
 
 
-class CapsNet(object):
+class CapsNetAffNIST(object):
     def __init__(self, is_training=True):
         self.graph = tf.Graph()
         with self.graph.as_default():
@@ -44,17 +44,19 @@ class CapsNet(object):
             conv1 = tf.contrib.layers.conv2d(self.X, num_outputs=256,
                                              kernel_size=9, stride=1,
                                              padding='VALID')
-            assert conv1.get_shape() == [cfg.batch_size, 20, 20, 256]
+            # print("conv1 shape - ",conv1.get_shape())
+            assert conv1.get_shape() == [cfg.batch_size, 32, 32, 256]
 
-        # Primary Capsules layer, return [batch_size, 1152, 8, 1]
+        # Primary Capsules layer, return [batch_size, 4608, 8, 1]
         with tf.variable_scope('PrimaryCaps_layer'):
-            primaryCaps = CapsLayer(num_outputs=32, vec_len=8, with_routing=False, layer_type='CONV')
+            primaryCaps = CapsLayerAffNIST(num_outputs=32, vec_len=8, with_routing=False, layer_type='CONV')
             caps1 = primaryCaps(conv1, kernel_size=9, stride=2)
-            assert caps1.get_shape() == [cfg.batch_size, 1152, 8, 1]
+            # print("caps1.get_shape - ",caps1.get_shape())
+            assert caps1.get_shape() == [cfg.batch_size, 4608, 8, 1]
 
         # DigitCaps layer, return [batch_size, 10, 16, 1]
         with tf.variable_scope('DigitCaps_layer'):
-            digitCaps = CapsLayer(num_outputs=10, vec_len=16, with_routing=True, layer_type='FC')
+            digitCaps = CapsLayerAffNIST(num_outputs=10, vec_len=16, with_routing=True, layer_type='FC')
             self.caps2 = digitCaps(caps1)
 
         # Decoder structure in Fig. 2
@@ -99,7 +101,7 @@ class CapsNet(object):
             assert fc1.get_shape() == [cfg.batch_size, 512]
             fc2 = tf.contrib.layers.fully_connected(fc1, num_outputs=1024)
             assert fc2.get_shape() == [cfg.batch_size, 1024]
-            self.decoded = tf.contrib.layers.fully_connected(fc2, num_outputs=784, activation_fn=tf.sigmoid)
+            self.decoded = tf.contrib.layers.fully_connected(fc2, num_outputs=1600, activation_fn=tf.sigmoid)
 
     def loss(self):
         # 1. The margin loss
@@ -141,7 +143,7 @@ class CapsNet(object):
         train_summary.append(tf.summary.scalar('train/margin_loss', self.margin_loss))
         train_summary.append(tf.summary.scalar('train/reconstruction_loss', self.reconstruction_err))
         train_summary.append(tf.summary.scalar('train/total_loss', self.total_loss))
-        recon_img = tf.reshape(self.decoded, shape=(cfg.batch_size, 28, 28, 1))
+        recon_img = tf.reshape(self.decoded, shape=(cfg.batch_size, 40, 40, 1))
         train_summary.append(tf.summary.image('reconstruction_img', recon_img))
         self.train_summary = tf.summary.merge(train_summary)
 

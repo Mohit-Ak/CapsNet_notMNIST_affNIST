@@ -6,7 +6,8 @@ from tqdm import tqdm
 
 from config import cfg
 from utils import load_data
-from capsNet import CapsNet
+from capsNetNotMNIST import CapsNetNotMNIST
+from capsNetAffNIST import CapsNetAffNIST
 
 
 def save_to():
@@ -113,7 +114,12 @@ def evaluation(model, supervisor, num_label):
 def main(_):
     tf.logging.info(' Loading Graph...')
     num_label = 10
-    model = CapsNet()
+    print("The dataset is :"+cfg.dataset)
+    if cfg.dataset=="notMNIST":
+        model = CapsNetNotMNIST()    
+    elif cfg.dataset=="affNIST":
+        model = CapsNetAffNIST()
+        
     tf.logging.info(' Graph loaded')
 
     sv = tf.train.Supervisor(graph=model.graph, logdir=cfg.logdir, save_model_secs=0)
