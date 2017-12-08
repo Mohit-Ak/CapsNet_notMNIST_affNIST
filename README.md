@@ -1,6 +1,7 @@
 # Capsule Network - notMNIST and affNIST Dataset
 A Tensorflow implementation of CapsNet on notMNIST and affNIST dataset based on Geoffrey Hinton's paper [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829)
 
+Note - This is implemented as a project for the subject CSE676-Deep Learning at the University of Buffalo.
 ## Datasets ##
 1) [notMNIST](http://yaroslavvb.blogspot.com/2011/09/notmnist-dataset.html) which contatins letters from 'A' to 'J' and can be used for validating if a given algorithm is generic and can work outside the MNIST dataset.
 
@@ -54,24 +55,21 @@ $ # for fashion-mnist dataset
 $ python main.py --dataset fashion-mnist --is_training=False
 ```
 
-> **Note:** The default parameters of batch size is 128, and epoch 50. You may need to modify the ``config.py`` file or use command line parameters to suit your case, e.g. set batch size to 64 and do once test summary every 200 steps: ``python main.py  --test_sum_freq=200 --batch_size=48``
+> **Note:** The default parameters of batch size is 128 but since affNIST is 40*40 it does not run on Gtx1070i unless the batch size is brought down to 32.
 
 ## Results
 
-- training loss
+- Training Loss
 
-![total_loss](results/total_loss.png)
-![margin_loss](results/margin_loss.png)
-![reconstruction_loss](results/reconstruction_loss.png)
+![total_loss_notMNIST](result_plots/loss_notMNIST.png)
+![total_loss_affNIST](results/loss_affNIST.png)
 
-- test accuracy(using reconstruction)
 
-Routing iteration | 1 | 2 | 3 |
-:-----|:----:|:----:|:------|
-Test accuracy | 0.43 | 0.44 | 0.49 |
-*Paper* | 0.29 | - | 0.25 |
+- Training and Validation Accuracy
+![accuracy_notMNIST](result_plots/training_val_notMNIST.png)
+![accuracy_affNIST](result_plots/training_val_affNIST.png)
 
-![test_acc](results/routing_trials.png)
+![test_acc](result_plots/routing_trials.png)
 
 
 ![capsVSneuron](imgs/capsuleVSneuron.png)
