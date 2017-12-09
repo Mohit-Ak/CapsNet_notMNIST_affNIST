@@ -24,10 +24,9 @@ Research into "capsules" has suggested that it is beneficial to directly model t
 
 ## Usage
 **Step 1.** Download this repository with ``git`` or click the [download ZIP](https://github.com/naturomics/CapsNet-Tensorflow/archive/master.zip) button.
-
 ```
-$ git clone https://github.com/naturomics/CapsNet-Tensorflow.git
-$ cd CapsNet-Tensorflow
+$ git clone https://github.com/Mohit-Ak/CapsNet_notMNIST_affNIST.git
+$ cd CapsNet_notMNIST_affNIST
 ```
 
 **Step 2.** Download the [notMNIST](https://github.com/davidflanagan/notMNIST-to-MNIST.git)
@@ -43,8 +42,8 @@ $ gunzip data/notMnist/*.gz
 
 ```
 $ python main.py
-$ # or training for fashion-mnist dataset
-$ python main.py --dataset fashion-mnist
+$ # or training for affNIST dataset
+$ python main.py --dataset affNIST
 ```
 
 **Step 4.** Calculate test accuracy
@@ -52,24 +51,27 @@ $ python main.py --dataset fashion-mnist
 ```
 $ python main.py --is_training=False
 $ # for fashion-mnist dataset
-$ python main.py --dataset fashion-mnist --is_training=False
+$ python main.py --dataset affNIST --is_training=False
 ```
 
 > **Note:** The default parameters of batch size is 128 but since affNIST is 40*40 it does not run on Gtx1070i unless the batch size is brought down to 32.
 
 ## Results
 
+Dataset | notMNIST | affNIST 
+:-----|:----:|:----:
+Validation accuracy | 90.3% | 97.7%
+
 - Training Loss
 
 ![total_loss_notMNIST](result_plots/loss_notMNIST.png)
-![total_loss_affNIST](results/loss_affNIST.png)
+![total_loss_affNIST](result_plots/loss_affNIST.png)
 
 
 - Training and Validation Accuracy
 ![accuracy_notMNIST](result_plots/training_val_notMNIST.png)
 ![accuracy_affNIST](result_plots/training_val_affNIST.png)
 
-![test_acc](result_plots/routing_trials.png)
 
 
 ![capsVSneuron](imgs/capsuleVSneuron.png)
