@@ -18,9 +18,10 @@ Research into "capsules" has suggested that it is beneficial to directly model t
 ## Requirements
 - Python
 - NumPy
-- [Tensorflow](https://github.com/tensorflow/tensorflow) (I'm using 1.3.0, not yet tested for older version)
+- [Tensorflow](https://github.com/tensorflow/tensorflow) (I'm using 1.3.0)
 - tqdm (for displaying training progress info)
 - scipy (for saving images)
+- matplotlib
 
 ## Usage
 **Step 1.** Download this repository with ``git`` or click the [download ZIP](https://github.com/naturomics/CapsNet-Tensorflow/archive/master.zip) button.
@@ -29,9 +30,18 @@ $ git clone https://github.com/Mohit-Ak/CapsNet_notMNIST_affNIST.git
 $ cd CapsNet_notMNIST_affNIST
 ```
 
-**Step 2.** Download the [notMNIST](https://github.com/davidflanagan/notMNIST-to-MNIST.git)
+**Step 2a.** Download the [notMNIST](https://github.com/davidflanagan/notMNIST-to-MNIST.git)
 
 - a) Unzip the same into the data/notMNIST
+
+```
+$ mkdir -p data/notMnist
+$ gunzip data/notMnist/*.gz
+```
+**Step 2b.** [or] Download the [affNIST](http://www.cs.toronto.edu/~tijmen/affNIST/)
+
+- a) Unzip the training and validation batches into the data/affNIST/train
+- b) Unzip the same into the data/affNIST/test
 
 ```
 $ mkdir -p data/notMnist
@@ -53,6 +63,7 @@ $ python main.py --is_training=False
 $ # for fashion-mnist dataset
 $ python main.py --dataset affNIST --is_training=False
 ```
+
 
 > **Note:** The default parameters of batch size is 128 but since affNIST is 40*40 it does not run on Gtx1070i unless the batch size is brought down to 32.
 
