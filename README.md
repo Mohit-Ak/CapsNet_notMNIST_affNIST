@@ -73,6 +73,8 @@ Dataset | notMNIST | affNIST
 :-----|:----:|:----:
 Validation accuracy | 90.3% | 97.7%
 
+- Trained Model Downloads : https://drive.google.com/drive/folders/1vU5jQ0lTV-D5Yyztm8eAi4sKoFtLBrzj?usp=sharing
+
 - Training Loss
 
 ![total_loss_notMNIST](result_plots/loss_notMNIST.png)
